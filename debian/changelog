@@ -1,3 +1,9 @@
+smcroute (1.99.2-0.1~aroth~ppa1) trusty; urgency=medium
+
+  * new upstream version 1.99.2
+
+ -- Andreas Roth <aroth@arsoft-online.com>  Mon, 30 Jun 2014 12:28:25 +0200
+
 smcroute (0.95-2) unstable; urgency=low
 
   * Switch to dpkg-source 3.0 (quilt) format for easier patch maintenance.

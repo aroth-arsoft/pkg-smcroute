@@ -20,7 +20,7 @@ endif
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	cd src; ./configure --prefix=/usr
+	./configure --prefix=/usr
 	touch configure-stamp
 
 build-indep: build-stamp
@@ -29,7 +29,7 @@ build-stamp: configure
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE) -C src all CFLAGS="$(CFLAGS)"
+	$(MAKE) all CFLAGS="$(CFLAGS)"
 
 	touch build-stamp
 
@@ -38,11 +38,15 @@ build:	build-arch build-indep
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
+	-rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	[ ! -f src/Makefile ] || $(MAKE) -C src clean
-	rm -vf src/config.h src/config.log src/config.status src/Makefile configure-stamp
+	[ ! -f Makefile ] || $(MAKE) clean
+	-rm -f doc/Makefile
+	-rm -f src/config.h
+	-rm -f src/.*.d
+	-rm -f src/Makefile
+	-rm -f config.log config.status Makefile configure-stamp
 
 	dh_clean 
 
