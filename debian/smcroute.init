@@ -22,6 +22,8 @@ DAEMON_OPTS=-d
 NAME=smcroute
 DESC="static multicast router daemon"
 
+. /lib/lsb/init-functions
+
 test -x $DAEMON || exit 0
 
 # Include smcroute defaults if available
@@ -36,9 +38,6 @@ case "$1" in
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start --quiet \
 		--exec $DAEMON -- $DAEMON_OPTS
-	if [ -x /etc/smcroute/startup.sh ]; then
-		/etc/smcroute/startup.sh
-	fi
 	echo "$NAME."
 	;;
   stop)
@@ -57,9 +56,6 @@ case "$1" in
 	sleep 1
 	start-stop-daemon --start --quiet --pidfile \
 		/var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS
-	if [ -x /etc/smcroute/startup.sh ]; then
-		/etc/smcroute/startup.sh
-	fi
 	echo "$NAME."
 	;;
   *)

@@ -3,7 +3,7 @@ Section: net
 Priority: extra
 Maintainer: Micha Lenk <micha@debian.org>
 Uploaders: Julien BLACHE <jblache@debian.org>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), cppcheck, quilt
 Standards-Version: 3.9.5
 Homepage: https://alioth.debian.org/projects/smcroute/
 

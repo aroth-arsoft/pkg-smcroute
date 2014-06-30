@@ -9,81 +9,20 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-CFLAGS = -Wall -g
+%:
+	dh $@
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	./configure --prefix=/usr
-	touch configure-stamp
-
-build-indep: build-stamp
-build-arch: build-stamp
-build-stamp: configure
-	dh_testdir
-
-	# Add here commands to compile the package.
-	$(MAKE) all CFLAGS="$(CFLAGS)"
-
-	touch build-stamp
-
-build:	build-arch build-indep
-
-clean:
-	dh_testdir
-	dh_testroot
-	-rm -f build-stamp
-
+override_dh_clean:
+	dh_clean
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) clean
 	-rm -f doc/Makefile
 	-rm -f src/config.h
 	-rm -f src/.*.d
 	-rm -f src/Makefile
-	-rm -f config.log config.status Makefile configure-stamp
+	#-rm -f config.log config.status Makefile configure-stamp
 
-	dh_clean 
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k 
-	dh_installdirs
-
-	# Add here commands to install the package into debian/smcroute.
-	cp src/smcroute $(CURDIR)/debian/smcroute/usr/sbin
-	cp src/mcsender $(CURDIR)/debian/smcroute/usr/sbin
-	mkdir -p $(CURDIR)/debian/smcroute/etc/smcroute
-	cp debian/startup.sh $(CURDIR)/debian/smcroute/etc/smcroute
-	chmod +x $(CURDIR)/debian/smcroute/etc/smcroute/startup.sh
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs ChangeLog
-	dh_installdocs
-	dh_installinit
-	dh_installman doc/smcroute.8 doc/mcsender.8
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: configure build build-arch build-indep clean binary-indep binary-arch binary install
+override_dh_auto_install:
+	dh_auto_install
+	install -d -m 0755 debian/smcroute/etc
+	install -m 0644 debian/smcroute.conf debian/smcroute/etc/smcroute.conf
