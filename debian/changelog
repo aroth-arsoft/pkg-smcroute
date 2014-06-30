@@ -1,0 +1,110 @@
+smcroute (0.95-2) unstable; urgency=low
+
+  * Switch to dpkg-source 3.0 (quilt) format for easier patch maintenance.
+  * Added patch 01_fix_segfault.patch to fix a NULL pointer dereferencing in
+    interface vector initialization (closes: #707793, LP: #1043688).
+
+ -- Micha Lenk <micha@debian.org>  Wed, 22 May 2013 13:41:51 +0200
+
+smcroute (0.95-1) unstable; urgency=low
+
+  * New upstream version, added support for FreeBSD
+  * debian/control:
+    - Changed priority from 'optional' to 'extra' (see #609864).
+    - Bump Standards-Version to 3.9.2 (no changes).
+    - Swapped Maintainer and Uploader.
+
+  Fixed Lintian errors/warnings:
+  * debian/smcroute.init: Added LSB dependencies on $remote_fs.
+  * debian/rules: Added recommended build-arch and build-indep targets.
+
+ -- Micha Lenk <micha@debian.org>  Mon, 08 Aug 2011 20:08:48 +0200
+
+smcroute (0.94.1-1) unstable; urgency=low
+
+  * New upstream release
+    + fixed IPv6 related startup problem of smcroute (closes: #564881).
+  * Added debian/watch file with new download location (closes: #554164).
+
+ -- Micha Lenk <micha@debian.org>  Wed, 13 Jan 2010 12:17:30 +0100
+
+smcroute (0.94-1) unstable; urgency=low
+
+  * New upstream release, supports IPv6 now (closes: #551209).
+  * Adapted debian/rules to new build system.
+  * Dropped debian specific manpage for mcsender and install the one now
+    provided by upstream.
+  * debian/control:
+    + Added myself to Uploaders
+    + Added Homepage field
+    + Bump Standards-Version to 3.8.3 (no changes).
+
+ -- Micha Lenk <micha@debian.org>  Mon, 02 Nov 2009 09:54:51 +0100
+
+smcroute (0.93d-4) unstable; urgency=low
+
+  * debian/control:
+    + Bump Standards-Version to 3.7.3 (no changes).
+
+ -- Julien BLACHE <jblache@debian.org>  Sat, 01 Mar 2008 16:39:57 +0100
+
+smcroute (0.93d-3) unstable; urgency=low
+
+  * debian/control:
+    + Do not mention the obsolete mrouted package in the long description,
+      instead tell about pimd and xorp (closes: #439263).
+
+ -- Julien BLACHE <jblache@debian.org>  Thu, 23 Aug 2007 20:20:39 +0200
+
+smcroute (0.93d-2) unstable; urgency=low
+
+  * debian/rules:
+    + Do not ignore errors from make clean.
+  * debian/compat, debian/control:
+    + Upgrade to DH_COMPAT 5.
+  * debian/smcroute.init:
+    + Add LSB header.
+
+ -- Julien BLACHE <jblache@debian.org>  Thu, 02 Aug 2007 18:48:42 +0200
+
+smcroute (0.93d-1) unstable; urgency=low
+
+  * New upstream release.
+    + Patches dropped, merged upstream.
+  * debian/control:
+    + Drop dpatch build-dependency.
+  * debian/copyright:
+    + Update the copyright holders.
+
+ -- Julien BLACHE <jblache@debian.org>  Sun,  9 Jul 2006 18:51:45 +0200
+
+smcroute (0.92-3) unstable; urgency=low
+
+  * Switch to dpatch.
+  * debian/control:
+    + Build-Depends on dpatch.
+  * debian/rules:
+    + Use dpatch.
+  * debian/patches/01_build_fixes.dpatch:
+    + Added; various build fixes (missing includes, namespace clashes, ...).
+  * debian/patches/02_daemon_init.dpatch:
+    + Added; call init functions in the parent so we can return an error code
+      to the initscript when something goes wrong.
+
+ -- Julien BLACHE <jblache@debian.org>  Sun,  4 Jun 2006 11:41:29 +0200
+
+smcroute (0.92-2) unstable; urgency=low
+
+  * src/smcroute.c, src/syslog.c:
+    + Fixed smcroute so that an error code is returned if the daemon fails to
+      start, instead of always returning 0. That way, the initscript can now
+      fail.
+
+ -- Julien BLACHE <jblache@debian.org>  Sun,  4 Jun 2006 10:34:02 +0200
+
+smcroute (0.92-1) unstable; urgency=low
+
+  * Initial release (closes: #369785).
+
+ -- Julien BLACHE <jblache@debian.org>  Thu,  1 Jun 2006 13:09:15 +0200
+
