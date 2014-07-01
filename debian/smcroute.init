@@ -35,32 +35,38 @@ set -e
 
 case "$1" in
   start)
-	echo -n "Starting $DESC: "
+    log_daemon_msg "Starting ${DESC}" ${NAME}
 	start-stop-daemon --start --quiet \
 		--exec $DAEMON -- $DAEMON_OPTS
-	echo "$NAME."
+	RET=$?
+	if [ ${RET} = 0 -o ${RET} = 1 ] ; then
+		log_end_msg 0
+	else
+		log_end_msg 1
+		exit 1
+	fi
 	;;
   stop)
-	echo -n "Stopping $DESC: "
+	log_daemon_msg "Stopping ${DESC}" ${NAME}
 	$DAEMON -k || true
-	echo "$NAME."
+	RET=$?
+	if [ ${RET} = 0 -o ${RET} = 1 ] ; then
+		log_end_msg $?
+	else
+		log_end_msg 1
+		exit 1
+	fi
 	;;
-  restart|force-reload)
-	#
-	#	If the "reload" option is implemented, move the "force-reload"
-	#	option to the "reload" entry above. If not, "force-reload" is
-	#	just the same as "restart".
-	#
-	echo -n "Restarting $DESC: "
-	$DAEMON -k || true
+  status)
+	status_of_proc "$DAEMON" ${NAME} && exit 0 || exit $?
+	;;
+  restart|reload|force-reload)
+	$0 stop
 	sleep 1
-	start-stop-daemon --start --quiet --pidfile \
-		/var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS
-	echo "$NAME."
+	$0 start
 	;;
   *)
-	N=/etc/init.d/$NAME
-	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	echo "Usage: ${0} {start|stop|status|restart|reload}" >&2
 	exit 1
 	;;
 esac
