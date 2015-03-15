@@ -2,10 +2,12 @@ Source: smcroute
 Section: net
 Priority: extra
 Maintainer: Micha Lenk <micha@debian.org>
-Uploaders: Julien BLACHE <jblache@debian.org>
-Build-Depends: debhelper (>= 9), cppcheck, quilt
-Standards-Version: 3.9.5
-Homepage: https://alioth.debian.org/projects/smcroute/
+Build-Depends: debhelper (>= 9), dh-autoreconf
+Standards-Version: 3.9.6
+Homepage: http://troglobit.com/smcroute.html
+Vcs-Browser: http://source.lenk.info/git/pkg-smcroute.git
+Vcs-Git: git://source.lenk.info/git/pkg-smcroute.git
+Testsuite: autopkgtest
 
 Package: smcroute
 Architecture: any

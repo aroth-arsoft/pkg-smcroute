@@ -1,0 +1,3 @@
+Tests: daemon-init-scripts mr-cache-ipv4 mr-cache-ipv6
+Restrictions: needs-root isolation-machine allow-stderr
+Depends: @, libipc-system-simple-perl, procps

@@ -1,28 +1,31 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
-
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-%:
-	dh $@
+# See dpkg-buildflags(1) manpage
+DEB_CFLAGS_MAINT_APPEND = -Wall -Werror -ggdb
 
-override_dh_clean:
-	dh_clean
-	# Add here commands to clean up after the build process.
-	[ ! -f Makefile ] || $(MAKE) clean
-	-rm -f doc/Makefile
-	-rm -f src/config.h
-	-rm -f src/.*.d
-	-rm -f src/Makefile
-	#-rm -f config.log config.status Makefile configure-stamp
+%:
+	dh $@ --with autoreconf
+
+override_dh_auto_configure:
+	dh_auto_configure -- --bindir=/usr/sbin
 
 override_dh_auto_install:
 	dh_auto_install
-	install -d -m 0755 debian/smcroute/etc
-	install -m 0644 debian/smcroute.conf debian/smcroute/etc/smcroute.conf
+	# delete smcroute.conf from /usr/share/doc/smcroute/ as this is also
+	# installed by dh_installexamples to the proper examples/ subdirectory
+	find debian/ -name smcroute.conf -type f -delete -printf "Removing %p\n"
+	# delete smcroute.init from /usr/share/doc/smcroute/ as it needs to be
+	# installed to /etc/init.d/
+	install -D -m 0755 smcroute.init debian/smcroute/etc/init.d/smcroute
+	find debian/ -name smcroute.init -type f -delete -printf "Removing %p\n"
+	# delete duplicate license file /usr/share/doc/smcroute/COPYING
+	rm -v debian/smcroute/usr/share/doc/smcroute/COPYING
+
+override_dh_installinit:
+	dh_installinit --onlyscripts
+
+override_dh_installchangelogs:
+	# this avoids lintian complaining about duplicate-changelog-files
+	dh_installchangelogs -k

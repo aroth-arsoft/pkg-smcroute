@@ -1,7 +1,3 @@
-# use uscan(1)
 version=3
-
-# Full-site-with-pattern  [Version  [Action]]
-http://alioth.debian.org/frs/?group_id=30986 \
-  https://alioth.debian.org/frs/download.php/.*/smcroute-(.*)\.tar\.gz
-
+https://github.com/troglobit/smcroute/releases \
+(?:|.*/)smcroute/archive/(\d\S*)\.(?:tar\.xz|txz|tar\.bz2|tbz2|tar\.gz|tgz|tar\.lz)

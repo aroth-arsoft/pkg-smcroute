@@ -1,0 +1,87 @@
+#! /usr/bin/env perl
+use strict;
+use warnings;
+use Carp;
+use Test::More;
+use IPC::System::Simple qw( capture $EXITVAL EXIT_ANY );
+
+use constant {
+    VIF_TABLE => '/proc/net/ip6_mr_vif',
+    MR_CACHE  => '/proc/net/ip6_mr_cache',
+    MC_SENDER => 'fc00::1',	# arbitrary IP address from private range
+    MC_GROUP  => 'ff01:0:0:0:0:0:0:114',  # "any private experiment" (IANA) with node-local scope
+};
+
+# Check preconditions
+if (-e VIF_TABLE) {
+    plan tests => 9;
+} else {
+    plan skip_all => "Test irrelevant on systems without IPv4 multicast (file /proc/net/ip_mr_vif doesn't exist)";
+}
+
+# Verify that smcroute is running
+my $smcroute_pid = capture( EXIT_ANY, 'pgrep', 'smcroute' );
+chomp $smcroute_pid;
+is $EXITVAL, 0, "smcroute is running".( $EXITVAL ? '' : " (pid $smcroute_pid)" );
+
+# Get a valid multicast interface
+my @interfaces = get_multicast_interfaces();
+my $first_itf = $interfaces[0];
+ok @interfaces >= 1, "At least one multicast capable interface found: $first_itf"
+    or diag read_file(VIF_TABLE);
+
+# Verify that there are no multicast routes when we start
+my @routes = get_multicast_routes();
+is @routes, 0, "Multicast routing cache is empty"
+    or diag read_file(MR_CACHE);
+
+# Add a multicast route
+my $route_txt = MC_SENDER."->$first_itf->$first_itf->".MC_GROUP;
+my $output = capture( EXIT_ANY, 'smcroute', '-a', $first_itf, MC_SENDER, MC_GROUP, $first_itf);
+is $EXITVAL, 0, "adding multicast route $route_txt doesn't fail (return code: $EXITVAL)";
+is $output, '', "adding multicast route $route_txt doesn't generate any console output"
+    or diag "Unexpected output\n$output";
+@routes = get_multicast_routes();
+is @routes, 1, "Multicast routing cache now contains one entry";
+diag read_file(MR_CACHE);
+
+# Remove the multicast route again
+$output = capture( EXIT_ANY, 'smcroute', '-r', $first_itf, MC_SENDER, MC_GROUP);
+is $EXITVAL, 0, "removing multicast route $route_txt doesn't fail (return code: $EXITVAL)";
+is $output, '', "removing multicast route $route_txt doesn't generate any console output"
+    or diag "Unexpected output\n$output";
+@routes = get_multicast_routes();
+is @routes, 0, "Multicast routing cache is empty again"
+    or diag read_file(MR_CACHE);
+
+####################################################################################
+# sub routines
+
+sub get_multicast_interfaces {
+    my @vif = read_file(VIF_TABLE);
+    my @itf;
+    shift @vif;	# skip table header
+    foreach (@vif) {
+        chomp;
+        s/^\s+//;
+        my @columns = split(/\s+/);
+        push @itf, $columns[1];
+    }
+    return @itf;
+}
+
+sub get_multicast_routes {
+    my @routes = read_file(MR_CACHE);
+    shift @routes;	# skip table header
+    return @routes;
+}
+
+sub read_file {
+    my $filename = shift;
+    croak "no filename specified" unless $filename;
+    open my $fh, "<$filename"
+        or croak "failed to read file $filename: $!";
+    my @contents = <$fh>;
+    close $fh;
+    return wantarray ? @contents : "@contents";
+}

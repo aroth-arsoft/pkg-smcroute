@@ -1,3 +1,52 @@
+smcroute (2.0.0-4) unstable; urgency=medium
+
+  * Fix autopkgtest: Add missing smcroute test dependency, missing comma, and
+    missing allow-stderr (Closes: #767592). Thanks to Martin Pitt
+    <martin.pitt@ubuntu.com> for providing the patch.
+
+ -- Micha Lenk <micha@debian.org>  Sat, 01 Nov 2014 20:55:08 +0100
+
+smcroute (2.0.0-3) unstable; urgency=medium
+
+  * Add Testsuite: autopkgtest to debian/control, on behalf of a traveling
+    Micha
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 30 Oct 2014 16:11:03 +0100
+
+smcroute (2.0.0-2) unstable; urgency=medium
+
+  * Delete debian/smcroute.dirs because package builds also without it.
+  * Install binaries to /usr/sbin to make init script working again
+    (Closes: #766915).
+  * Add patch 0001-Fix-issue-10-Loop-forever-on-command-if-daemon-not-r.patch
+    to fix hanging init script on stop in case the daemon isn't running.
+  * Add some Autopkgtests covering daemon start stop via System V init scripts,
+    addition and removal of static multicast routes.
+
+ -- Micha Lenk <micha@debian.org>  Thu, 30 Oct 2014 00:27:59 +0100
+
+smcroute (2.0.0-1) unstable; urgency=low
+
+  * New upstream version, does build again on FreeBSD (closes: #763381).
+  * Use init script provided by upstream.
+
+ -- Micha Lenk <micha@debian.org>  Fri, 03 Oct 2014 10:44:16 +0200
+
+smcroute (1.99.2-1) unstable; urgency=medium
+
+  * New upstream version.
+  * Drop patch 01_fix_segfault.patch, included upstream.
+  * Update upstream homepage
+  * Update debian/watch file for new upstream download location
+  * Add Vcs-Browser: and Vcs-Git: control fields
+  * Drop uploaders because Julien Blache retired from the Debian project.
+    Thanks to Ana Guerrero for the hint (Closes: #688547)
+  * debian/rules: Rewrite using dh makefile style, requiring Debhelper 9
+  * Rewrite init script to use /lib/lsb/init-functions functions for output
+  * Package is compliant to Debian Policy 3.9.6 (no changes needed)
+
+ -- Micha Lenk <micha@debian.org>  Sun, 28 Sep 2014 21:35:08 +0200
+
 smcroute (1.99.2-0.1~aroth~ppa1) trusty; urgency=medium
 
   * new upstream version 1.99.2

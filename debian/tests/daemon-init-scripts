@@ -1,0 +1,38 @@
+#! /usr/bin/env perl
+use strict;
+use warnings;
+use Test::More;
+use IPC::System::Simple qw( capture $EXITVAL EXIT_ANY );
+
+use constant {
+    INIT_SCRIPT => '/etc/init.d/smcroute',
+};
+
+plan tests => 10;
+
+# Verify that smcroute is running
+my $initial_smcroute_pid = capture EXIT_ANY, 'pgrep', 'smcroute'; chomp $initial_smcroute_pid;
+is $EXITVAL, 0, "smcroute is running".( $EXITVAL ? '' : " (pid $initial_smcroute_pid)" );
+
+# Try to stop the daemon
+my $stop_output = capture EXIT_ANY, INIT_SCRIPT, 'stop';
+is $EXITVAL, 0, "stopping smcroute";
+my $smcroute_pid = capture EXIT_ANY, 'pgrep', 'smcroute'; chomp $smcroute_pid;
+is $EXITVAL, 1, "smcroute is really stopped".( $EXITVAL ? '' : " (pid $smcroute_pid)" );
+
+my $double_stop_output = capture EXIT_ANY, INIT_SCRIPT, 'stop';
+is $EXITVAL, 0, "stopping smcroute twice in a row";
+$smcroute_pid = capture EXIT_ANY, 'pgrep', 'smcroute'; chomp $smcroute_pid;
+is $EXITVAL, 1, "smcroute is really stopped".( $EXITVAL ? '' : " (pid $smcroute_pid)" );
+
+# Try to start the daemon again
+my $start_output = capture EXIT_ANY, INIT_SCRIPT, 'start';
+is $EXITVAL, 0, "starting smcroute";
+my $new_smcroute_pid = capture EXIT_ANY, 'pgrep', 'smcroute'; chomp $new_smcroute_pid;
+is $EXITVAL, 0, "smcroute is really running".( $EXITVAL ? '' : " (pid $new_smcroute_pid)" );
+isnt $new_smcroute_pid, $initial_smcroute_pid, "smcroute pid changed ($new_smcroute_pid != $initial_smcroute_pid)";
+
+my $double_start_output = capture EXIT_ANY, INIT_SCRIPT, 'start';
+is $EXITVAL, 0, "starting smcroute twice in a row";
+$smcroute_pid = capture EXIT_ANY, 'pgrep', 'smcroute'; chomp $smcroute_pid;
+is $EXITVAL, 0, "smcroute is really running".( $EXITVAL ? '' : " (pid $smcroute_pid)" );
