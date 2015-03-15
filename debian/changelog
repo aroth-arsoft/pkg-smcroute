@@ -1,3 +1,9 @@
+smcroute (2.0.0-4.1~aroth~ppa1) vivid; urgency=medium
+
+  * take over latest version and backport
+
+ -- Andreas Roth <aroth@arsoft-online.com>  Sun, 15 Mar 2015 14:24:24 +0100
+
 smcroute (2.0.0-4) unstable; urgency=medium
 
   * Fix autopkgtest: Add missing smcroute test dependency, missing comma, and
